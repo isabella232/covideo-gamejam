@@ -1,16 +1,33 @@
 package de.lostmekka.covidjam.backend.levelgen
 
+import de.lostmekka.covidjam.backend.Entity
 import de.lostmekka.covidjam.backend.Point
 import de.lostmekka.covidjam.backend.Tile
 import kotlin.math.abs
 import kotlin.math.min
 
-class GeneratedArea(
-    val tiles: List<Tile>
+class MutableLevel(
+    tiles: List<Tile> = listOf(),
+    entities: List<Entity> = listOf()
 ) {
-    operator fun plus(other: GeneratedArea) = GeneratedArea(
-        tiles = (tiles + other.tiles).distinctBy { it.pos }
+    private val tilesInternal: MutableMap<Point, Tile> = tiles.associateBy { it.pos }.toMutableMap()
+    private val entitiesInternal: MutableList<Entity> = entities.toMutableList()
+
+    val tiles: List<Tile> get() = tilesInternal.values.toList()
+    val entities: List<Entity> = entitiesInternal
+
+    operator fun plus(other: MutableLevel) = MutableLevel(
+        tiles = tiles + other.tiles,
+        entities = entities + other.entities
     )
+
+    fun addTiles(tiles: Iterable<Tile>) {
+        tiles.associateByTo(tilesInternal) { it.pos }
+    }
+
+    fun addEntities(entities: Iterable<Entity>) {
+        entitiesInternal += entities
+    }
 }
 
 abstract class Area : Iterable<Point> {
@@ -39,5 +56,5 @@ data class Rect(val x: Int, val y: Int, val w: Int, val h: Int) : Area() {
 }
 
 interface Generator<in T : Area> {
-    fun generate(area: T): GeneratedArea
+    fun generate(area: T, level: MutableLevel)
 }
