@@ -1,9 +1,13 @@
 package de.lostmekka.covidjam.backend
 
-import de.lostmekka.covidjam.backend.levelgen.FloorGenerator
 import de.lostmekka.covidjam.backend.levelgen.MutableLevel
 import de.lostmekka.covidjam.backend.levelgen.Rect
-import de.lostmekka.covidjam.backend.levelgen.RoomGenerator
+import de.lostmekka.covidjam.backend.levelgen.generator.borderGenerator
+import de.lostmekka.covidjam.backend.levelgen.generator.floorGenerator
+import de.lostmekka.covidjam.backend.levelgen.generator.roomGenerator
+import de.lostmekka.covidjam.backend.levelgen.generator.shelveAreaGenerator
+import de.lostmekka.covidjam.backend.levelgen.printDebug
+import kotlin.random.Random
 
 data class LevelGenerationInput(
     val levelSize: Dimension
@@ -39,20 +43,29 @@ data class Entity(
 object LevelGeneration : BackendEndpoint<LevelGenerationInput, LevelGenerationOutput> {
     override val path = "level/generate"
 
+    private fun createGenerator() =
+        roomGenerator(
+            inner = borderGenerator(
+                innerGenerator = shelveAreaGenerator(
+                    horizontal = Random.nextBoolean(),
+                    corridorWidth = (1..3).random(),
+                    doubleShelveColumn = Random.nextBoolean(),
+                    useTallShelves = Random.nextBoolean()
+                ),
+                borderGenerator = floorGenerator()
+            )
+        )
+
     override fun handleRequest(input: LevelGenerationInput): LevelGenerationOutput {
-        val rect = Rect(0, 0, input.levelSize.w, input.levelSize.h)
+        val bounds = Rect(0, 0, input.levelSize.w, input.levelSize.h)
         val generator = createGenerator()
-        val level = MutableLevel()
-        generator.generate(rect, level)
+        val level = MutableLevel(bounds)
+        generator.generate(bounds, level)
+        if (IS_RUNNING_IN_TEST) level.printDebug()
         return LevelGenerationOutput(
             tiles = level.tiles,
             entities = level.entities,
             entrancePositions = listOf()
         )
     }
-
-    private fun createGenerator() =
-        RoomGenerator(
-            inner = FloorGenerator()
-        )
 }

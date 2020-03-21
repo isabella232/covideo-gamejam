@@ -16,6 +16,8 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 @Suppress("unused") // Referenced in application.conf
 @kotlin.jvm.JvmOverloads
 fun Application.module(testing: Boolean = false) {
+    IS_RUNNING_IN_TEST = testing
+
     install(ContentNegotiation) {
         gson {
         }
@@ -25,6 +27,8 @@ fun Application.module(testing: Boolean = false) {
         backendEndpoint(LevelGeneration)
     }
 }
+
+var IS_RUNNING_IN_TEST = false
 
 interface BackendEndpoint<in T : Any, out U : Any> {
     val path: String

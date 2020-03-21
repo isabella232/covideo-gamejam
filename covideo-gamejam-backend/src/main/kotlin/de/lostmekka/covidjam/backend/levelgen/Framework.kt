@@ -7,6 +7,7 @@ import kotlin.math.abs
 import kotlin.math.min
 
 class MutableLevel(
+    val bounds: Rect,
     tiles: List<Tile> = listOf(),
     entities: List<Entity> = listOf()
 ) {
@@ -17,6 +18,7 @@ class MutableLevel(
     val entities: List<Entity> = entitiesInternal
 
     operator fun plus(other: MutableLevel) = MutableLevel(
+        bounds = bounds,
         tiles = tiles + other.tiles,
         entities = entities + other.entities
     )
@@ -25,15 +27,23 @@ class MutableLevel(
         tiles.associateByTo(tilesInternal) { it.pos }
     }
 
+    operator fun plusAssign(tile: Tile) {
+        tilesInternal[tile.pos] = tile
+    }
+
     fun addEntities(entities: Iterable<Entity>) {
         entitiesInternal += entities
+    }
+
+    operator fun plusAssign(entity: Entity) {
+        entitiesInternal += entity
     }
 }
 
 abstract class Area : Iterable<Point> {
     abstract operator fun contains(point: Point): Boolean
     operator fun plus(other: Area) = PointCloud(filter { it !in other }.toSet())
-    operator fun minus(other: Area) = PointCloud(toSet() + other.toSet())
+    operator fun minus(other: Area) = PointCloud(toSet() - other.toSet())
 }
 
 class PointCloud(val points: Set<Point>) : Area() {
@@ -52,7 +62,10 @@ data class Rect(val x: Int, val y: Int, val w: Int, val h: Int) : Area() {
         }
     }
 
-    override fun contains(point: Point) = point.x in x until x + w && point.y in y until y + h
+    override fun contains(point: Point) = point.x in xRange && point.y in yRange
+
+    val xRange = x until x + w
+    val yRange = y until y + h
 }
 
 interface Generator<in T : Area> {
