@@ -2,7 +2,6 @@ package de.lostmekka.covidjam.backend.levelgen
 
 import de.lostmekka.covidjam.backend.Point
 import de.lostmekka.covidjam.backend.Tile
-import de.lostmekka.covidjam.backend.TileType
 import kotlin.math.abs
 import kotlin.math.min
 

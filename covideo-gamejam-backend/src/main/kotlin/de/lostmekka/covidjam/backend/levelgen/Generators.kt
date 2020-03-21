@@ -1,11 +1,11 @@
 package de.lostmekka.covidjam.backend.levelgen
 
-import de.lostmekka.covidjam.backend.Tile
 import de.lostmekka.covidjam.backend.TileType
 
 class FloorGenerator : Generator<Area> {
     override fun generate(area: Area) =
-        GeneratedArea(area.map { Tile(it, TileType.Floor, false) })
+        area.map { it.toTile(TileType.Floor) }
+            .toGeneratedArea()
 }
 
 class RoomGenerator(
@@ -13,7 +13,9 @@ class RoomGenerator(
 ) : Generator<Rect> {
     override fun generate(area: Rect): GeneratedArea {
         val innerRect = Rect(area.x + 1, area.y + 1, area.w - 2, area.h - 2)
-        val wallTiles = (area - innerRect).map { Tile(it, TileType.Wall, false) }
-        return GeneratedArea(wallTiles) + inner.generate(innerRect)
+        val walls = (area - innerRect)
+            .map { it.toTile(TileType.Wall) }
+            .toGeneratedArea()
+        return walls + inner.generate(innerRect)
     }
 }

@@ -17,11 +17,10 @@ data class Point(val x: Int, val y: Int)
 
 data class Tile(
     val pos: Point,
-    val type: TileType,
-    val isEntrance: Boolean
+    val type: TileType
 )
 
-enum class TileType { Floor, Wall, Shelve, Door }
+enum class TileType { Floor, Wall, Door }
 
 object LevelGeneration : BackendEndpoint<LevelGenerationInput, LevelGenerationOutput> {
     override val path = "level/generate"
