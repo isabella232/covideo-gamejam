@@ -1,0 +1,52 @@
+package de.lostmekka.covidjam.backend.levelgen.generator
+
+import de.lostmekka.covidjam.backend.Entity
+import de.lostmekka.covidjam.backend.Point
+import de.lostmekka.covidjam.backend.Tile
+import de.lostmekka.covidjam.backend.levelgen.Generator
+import de.lostmekka.covidjam.backend.levelgen.MutableLevel
+import de.lostmekka.covidjam.backend.levelgen.Rect
+import de.lostmekka.covidjam.backend.levelgen.TypeGroups
+
+fun floorGenerator() = fillGenerator(Tile.Type.Floor)
+
+fun roomGenerator(
+    inner: Generator<Rect>
+) = borderGenerator(
+    innerGenerator = inner,
+    borderGenerator = fillGenerator(Tile.Type.Wall)
+)
+
+fun shelveAreaGenerator(
+    horizontal: Boolean,
+    doubleShelveColumn: Boolean,
+    useTallShelves: Boolean,
+    corridorWidth: Int = 2
+) = object : Generator<Rect> {
+    override fun generate(area: Rect, level: MutableLevel) {
+        floorGenerator().generate(area, level)
+
+        val entityTypes = if (useTallShelves) TypeGroups.Shelve.tall else TypeGroups.Shelve.smallShelves
+        val columnWidth = if (doubleShelveColumn) 2 else 1
+        val totalCorridorWidth = corridorWidth + columnWidth
+        val areaWidth = if (horizontal) area.h else area.w
+        val areaLength = if (horizontal) area.w else area.h
+        val areaVirtualWidth = areaWidth + corridorWidth
+        val startOffset = areaVirtualWidth % totalCorridorWidth / 2 // what if this is odd?
+        val columnCount = areaVirtualWidth / totalCorridorWidth
+
+        for (columnIndex in 0 until columnCount) {
+            for (columnX in 0 until columnWidth) {
+                for (localY in 0 until areaLength) {
+                    val localX = startOffset + columnIndex * totalCorridorWidth + columnX
+                    val pos = if (horizontal) {
+                        Point(area.x + localY, area.y + localX)
+                    } else {
+                        Point(area.x + localX, area.y + localY)
+                    }
+                    level += Entity(pos, entityTypes.random())
+                }
+            }
+        }
+    }
+}

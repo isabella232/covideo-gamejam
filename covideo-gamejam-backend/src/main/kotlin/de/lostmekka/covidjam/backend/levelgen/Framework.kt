@@ -1,22 +1,49 @@
 package de.lostmekka.covidjam.backend.levelgen
 
+import de.lostmekka.covidjam.backend.Entity
 import de.lostmekka.covidjam.backend.Point
 import de.lostmekka.covidjam.backend.Tile
 import kotlin.math.abs
 import kotlin.math.min
 
-class GeneratedArea(
-    val tiles: List<Tile>
+class MutableLevel(
+    val bounds: Rect,
+    tiles: List<Tile> = listOf(),
+    entities: List<Entity> = listOf()
 ) {
-    operator fun plus(other: GeneratedArea) = GeneratedArea(
-        tiles = (tiles + other.tiles).distinctBy { it.pos }
+    private val tilesInternal: MutableMap<Point, Tile> = tiles.associateBy { it.pos }.toMutableMap()
+    private val entitiesInternal: MutableList<Entity> = entities.toMutableList()
+
+    val tiles: List<Tile> get() = tilesInternal.values.toList()
+    val entities: List<Entity> = entitiesInternal
+
+    operator fun plus(other: MutableLevel) = MutableLevel(
+        bounds = bounds,
+        tiles = tiles + other.tiles,
+        entities = entities + other.entities
     )
+
+    fun addTiles(tiles: Iterable<Tile>) {
+        tiles.associateByTo(tilesInternal) { it.pos }
+    }
+
+    operator fun plusAssign(tile: Tile) {
+        tilesInternal[tile.pos] = tile
+    }
+
+    fun addEntities(entities: Iterable<Entity>) {
+        entitiesInternal += entities
+    }
+
+    operator fun plusAssign(entity: Entity) {
+        entitiesInternal += entity
+    }
 }
 
 abstract class Area : Iterable<Point> {
     abstract operator fun contains(point: Point): Boolean
     operator fun plus(other: Area) = PointCloud(filter { it !in other }.toSet())
-    operator fun minus(other: Area) = PointCloud(toSet() + other.toSet())
+    operator fun minus(other: Area) = PointCloud(toSet() - other.toSet())
 }
 
 class PointCloud(val points: Set<Point>) : Area() {
@@ -35,9 +62,12 @@ data class Rect(val x: Int, val y: Int, val w: Int, val h: Int) : Area() {
         }
     }
 
-    override fun contains(point: Point) = point.x in x until x + w && point.y in y until y + h
+    override fun contains(point: Point) = point.x in xRange && point.y in yRange
+
+    val xRange = x until x + w
+    val yRange = y until y + h
 }
 
 interface Generator<in T : Area> {
-    fun generate(area: T): GeneratedArea
+    fun generate(area: T, level: MutableLevel)
 }
