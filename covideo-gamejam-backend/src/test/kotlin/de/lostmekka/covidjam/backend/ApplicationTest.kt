@@ -16,7 +16,7 @@ class ApplicationTest {
     @Test
     fun testRoot() {
         withTestApplication({ module(testing = true) }) {
-            testRequest(LevelGeneration, LevelGenerationEvent(levelSize = Dimension(10, 10)))
+            testRequest(LevelGeneration, LevelGenerationInput(levelSize = Dimension(10, 10)))
         }
     }
 }
