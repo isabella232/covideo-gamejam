@@ -33,8 +33,8 @@ dependencies {
     testImplementation("io.ktor:ktor-server-tests:$ktor_version")
 }
 
-kotlin.sourceSets["main"].kotlin.srcDirs("src")
-kotlin.sourceSets["test"].kotlin.srcDirs("test")
-
-sourceSets["main"].resources.srcDirs("resources")
-sourceSets["test"].resources.srcDirs("testresources")
+//kotlin.sourceSets["main"].kotlin.srcDirs("src")
+//kotlin.sourceSets["test"].kotlin.srcDirs("test")
+//
+//sourceSets["main"].resources.srcDirs("resources")
+//sourceSets["test"].resources.srcDirs("testresources")
