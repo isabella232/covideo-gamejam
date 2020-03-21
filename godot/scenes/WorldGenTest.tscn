@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://scripts/WorldGenClient.gd" type="Script" id=1]
+[ext_resource path="res://scripts/MockWorldGenServer.gd" type="Script" id=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+func _ready():
+	$WorldGenClient.just_connect()
+"
+
+[node name="WorldGenTest" type="Node2D"]
+script = SubResource( 1 )
+
+[node name="WorldGenClient" type="Node" parent="."]
+script = ExtResource( 1 )
+websocket_url = "ws://localhost:9080"
+
+[node name="MockWorldGenServer" type="Node" parent="."]
+script = ExtResource( 2 )
