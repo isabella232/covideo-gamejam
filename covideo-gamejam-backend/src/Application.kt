@@ -33,7 +33,7 @@ fun Application.module(testing: Boolean = false) {
             call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
         }
 
-        webSocket("/myws/echo") {
+        webSocket("/backend/ws") {
             send(Frame.Text("Hi from server"))
             while (true) {
                 val frame = incoming.receive()
