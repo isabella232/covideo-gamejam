@@ -26,19 +26,38 @@ object LevelGeneration : BackendEndpoint<LevelGenerationInput, LevelGenerationOu
     override val path = "level/generate"
 
     override fun handleRequest(input: LevelGenerationInput): LevelGenerationOutput {
+        val generator = RoomGenerator(
+            inner = FloorGenerator()
+        )
+
         val rect = Rect(0, 0, input.levelSize.w, input.levelSize.h)
+        val generated = generator.generate(rect)
         return LevelGenerationOutput(
-            tiles = emptyRoom(rect).toList()
+            tiles = generated.tiles
         )
     }
 }
 
-private typealias Area = MutableMap<Point, Tile>
+class GeneratedArea(
+    val tiles: List<Tile>
+) {
+    operator fun plus(other: GeneratedArea) = GeneratedArea(
+        tiles = (tiles + other.tiles).distinctBy { it.pos }
+    )
+}
 
-private fun Iterable<Tile>.asArea() = associateBy { it.pos }.toMutableMap()
-private fun Area.toList() = values.toList()
+abstract class Area : Iterable<Point> {
+    abstract operator fun contains(point: Point): Boolean
+    operator fun plus(other: Area) = PointCloud(filter { it !in other }.toSet())
+    operator fun minus(other: Area) = PointCloud(toSet() + other.toSet())
+}
 
-private data class Rect(val x: Int, val y: Int, val w: Int, val h: Int): Iterable<Point> {
+class PointCloud(val points: Set<Point>) : Area() {
+    override fun iterator() = points.iterator()
+    override fun contains(point: Point) = point in points
+}
+
+data class Rect(val x: Int, val y: Int, val w: Int, val h: Int) : Area() {
     constructor(p1: Point, p2: Point) : this(min(p1.x, p2.x), min(p1.y, p2.y), abs(p1.x - p2.x), abs(p1.y - p2.y))
 
     override fun iterator() = iterator {
@@ -48,18 +67,25 @@ private data class Rect(val x: Int, val y: Int, val w: Int, val h: Int): Iterabl
             }
         }
     }
+
+    override fun contains(point: Point) = point.x in x until x + w && point.y in y until y + h
 }
 
-private fun emptyRoom(rect: Rect): Area {
-    return rect
-        .map { pos ->
-            val (x, y) = pos
-            val type = when{
-                x in 1 until rect.w-1 -> TileType.Floor
-                y in 1 until rect.h-1 -> TileType.Floor
-                else -> TileType.Wall
-            }
-            Tile(pos, type, false)
-        }
-        .asArea()
+interface Generator<in T : Area> {
+    fun generate(area: T): GeneratedArea
+}
+
+class FloorGenerator : Generator<Area> {
+    override fun generate(area: Area) =
+        GeneratedArea(area.map { Tile(it, TileType.Floor, false) })
+}
+
+class RoomGenerator(
+    val inner: Generator<Rect>
+) : Generator<Rect> {
+    override fun generate(area: Rect): GeneratedArea {
+        val innerRect = Rect(area.x + 1, area.y + 1, area.w - 2, area.h - 2)
+        val wallTiles = (area - innerRect).map { Tile(it, TileType.Wall, false) }
+        return GeneratedArea(wallTiles) + inner.generate(innerRect)
+    }
 }
