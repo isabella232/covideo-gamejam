@@ -7,7 +7,7 @@ data class LevelGenerationInput(
     val levelSize: Dimension
 )
 
-class LevelGenerationOutput(
+data class LevelGenerationOutput(
     val tiles: List<Tile>
 )
 
@@ -27,19 +27,16 @@ object LevelGeneration : BackendEndpoint<LevelGenerationInput, LevelGenerationOu
 
     override fun handleRequest(input: LevelGenerationInput): LevelGenerationOutput {
         val rect = Rect(0, 0, input.levelSize.w, input.levelSize.h)
-
         return LevelGenerationOutput(
-            listOf(
-                Tile(Point(0, 0), TileType.Floor, false),
-                Tile(Point(0, 1), TileType.Floor, false),
-                Tile(Point(1, 0), TileType.Floor, false),
-                Tile(Point(1, 1), TileType.Floor, true)
-            )
+            tiles = emptyRoom(rect).toList()
         )
     }
 }
 
-private typealias Area = MutableSet<Tile>
+private typealias Area = MutableMap<Point, Tile>
+
+private fun Iterable<Tile>.asArea() = associateBy { it.pos }.toMutableMap()
+private fun Area.toList() = values.toList()
 
 private data class Rect(val x: Int, val y: Int, val w: Int, val h: Int): Iterable<Point> {
     constructor(p1: Point, p2: Point) : this(min(p1.x, p2.x), min(p1.y, p2.y), abs(p1.x - p2.x), abs(p1.y - p2.y))
@@ -51,4 +48,18 @@ private data class Rect(val x: Int, val y: Int, val w: Int, val h: Int): Iterabl
             }
         }
     }
+}
+
+private fun emptyRoom(rect: Rect): Area {
+    return rect
+        .map { pos ->
+            val (x, y) = pos
+            val type = when{
+                x in 1 until rect.w-1 -> TileType.Floor
+                y in 1 until rect.h-1 -> TileType.Floor
+                else -> TileType.Wall
+            }
+            Tile(pos, type, false)
+        }
+        .asArea()
 }

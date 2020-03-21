@@ -21,7 +21,7 @@ class ApplicationTest {
     }
 }
 
-private fun <T: Any, U: Any> TestApplicationEngine.testRequest(
+private inline fun <T: Any, reified U: Any> TestApplicationEngine.testRequest(
     endpoint: BackendEndpoint<T, U>,
     input: T
 ) {
@@ -30,7 +30,7 @@ private fun <T: Any, U: Any> TestApplicationEngine.testRequest(
         setBody(Gson().toJson(input))
     }.apply {
         assertEquals(HttpStatusCode.OK, response.status())
-        val answer = Gson().fromJson(response.content, List::class.java)
+        val answer = Gson().fromJson(response.content, U::class.java)
         println(answer)
     }
 }
