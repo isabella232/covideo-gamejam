@@ -10,7 +10,7 @@ import de.lostmekka.covidjam.backend.levelgen.toTile
 
 fun fillGenerator(
     tileTypes: List<Tile.Type>
-) = object : Generator<Area> {
+) = object : Generator {
     override fun generate(area: Area, level: MutableLevel) {
         area.map { it.toTile(tileTypes.random()) }
             .addTilesToLevel(level)
@@ -19,7 +19,7 @@ fun fillGenerator(
 
 fun fillGenerator(
     tileType: Tile.Type
-) = object : Generator<Area> {
+) = object : Generator {
     override fun generate(area: Area, level: MutableLevel) {
         area.map { it.toTile(tileType) }
             .addTilesToLevel(level)
@@ -27,19 +27,19 @@ fun fillGenerator(
 }
 
 fun borderGenerator(
-    innerGenerator: Generator<Rect>,
-    borderGenerator: Generator<Area>,
+    innerGenerator: Generator,
+    borderGenerator: Generator,
     rightBorder: Int = 1,
     topBorder: Int = 1,
     leftBorder: Int = 1,
     bottomBorder: Int = 1
-) = object : Generator<Rect> {
-    override fun generate(area: Rect, level: MutableLevel) {
+) = object : Generator {
+    override fun generate(area: Area, level: MutableLevel) {
         val innerRect = Rect(
-            x = area.x + leftBorder,
-            y = area.y + topBorder,
-            w = area.w - leftBorder - rightBorder,
-            h = area.h - topBorder - bottomBorder
+            x = area.bounds.x + leftBorder,
+            y = area.bounds.y + topBorder,
+            w = area.bounds.w - leftBorder - rightBorder,
+            h = area.bounds.h - topBorder - bottomBorder
         )
         innerGenerator.generate(innerRect, level)
         borderGenerator.generate(area - innerRect, level)
