@@ -6,7 +6,11 @@
 script/source = "extends Node2D
 
 func _ready():
-	print(yield($WorldGenClient.create_map(null), \"completed\"))
+	print(\"  \")
+	print(\"level_generate\")
+	var config = { \"levelSize\": { \"w\": 120, \"h\": 120 } }
+	print(\"  \", config)
+	print(\"  \", yield($WorldGenClient.level_generate(config), \"completed\"))
 "
 
 [node name="WorldGenTest" type="Node2D"]
@@ -14,5 +18,3 @@ script = SubResource( 1 )
 
 [node name="WorldGenClient" type="HTTPRequest" parent="."]
 script = ExtResource( 1 )
-world_gen_url = "http://www.mocky.io"
-create_map_path = "/v2/5185415ba171ea3a00704eed"
