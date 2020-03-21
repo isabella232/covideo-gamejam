@@ -3,4 +3,4 @@
 ## How to run
 Simply run `./gradlew run`
 
-The server accepts a websocket connection at localhost:8080/backend/ws
+The server accepts HTTP POST requests to localhost:8080/backend/...
