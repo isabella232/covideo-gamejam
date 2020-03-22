@@ -84,6 +84,62 @@ open class Rect(
 
     val xRange = x until x + w
     val yRange = y until y + h
+    val xEnd = x + w
+    val yEnd = y + h
+    val area = w * h
+
+    infix fun overlapsWithX(other: Rect) = x in other.x until other.xEnd || other.x in x until xEnd
+    infix fun overlapsWithY(other: Rect) = y in other.y until other.yEnd || other.y in y until yEnd
+    infix fun touchesY(other: Rect) = x == other.xEnd || other.x == xEnd
+    infix fun touchesX(other: Rect) = y == other.yEnd || other.y == yEnd
+
+    infix fun overlapsWith(other: Rect) = this overlapsWithX other && this overlapsWithY other
+    infix fun touches(other: Rect) =
+        (this overlapsWithX other && this touchesX other) || (this overlapsWithY other && this touchesY other)
+
+    fun split(
+        horizontally: Boolean,
+        at: Int,
+        minSideLength: Int = 1
+    ): Pair<Rect, Rect>? {
+        val limitingSize = if (horizontally) h else w
+        return when {
+            at < minSideLength || at > limitingSize - minSideLength -> null
+            horizontally -> Pair(
+                Rect(x, y, w, at),
+                Rect(x, y + at, w, h - at)
+            )
+            else -> Pair(
+                Rect(x, y, at, h),
+                Rect(x + at, y, w - at, h)
+            )
+        }
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    fun split(
+        horizontally: Boolean,
+        lengths: List<Int>
+    ): List<Rect> {
+        val limitingSize = if (horizontally) h else w
+        val lengthSum = lengths.sum()
+        if (lengthSum > limitingSize) {
+            throw IllegalArgumentException("cannot split rects with new sizes that sum up to more than the original size")
+        }
+        val rectCoords = lengths
+            .toMutableList()
+            .also {
+                it.add(0, 0)
+                if (lengthSum < limitingSize) it.add(limitingSize - lengthSum)
+            }
+            .scanReduce { a, b -> a + b }
+            .zipWithNext()
+        return if (horizontally) {
+            rectCoords.map { (y1, y2) -> Rect(x, y + y1, w, y2 - y1) }
+        } else {
+            rectCoords.map { (x1, x2) -> Rect(x + x1, y, x2 - x1, h) }
+        }
+    }
 }
 
 operator fun Point.rangeTo(other: Point) = Rect(
