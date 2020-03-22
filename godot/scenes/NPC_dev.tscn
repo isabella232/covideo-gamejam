@@ -2,15 +2,15 @@
 
 [ext_resource path="res://scripts/NPC_dev.gd" type="Script" id=1]
 
-[sub_resource type="RectangleShape2D" id=4]
+[sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 452.209, 10 )
 
-[sub_resource type="RectangleShape2D" id=5]
+[sub_resource type="RectangleShape2D" id=2]
 
-[sub_resource type="RectangleShape2D" id=6]
+[sub_resource type="RectangleShape2D" id=3]
 extents = Vector2( 10, 9.55228 )
 
-[sub_resource type="RectangleShape2D" id=7]
+[sub_resource type="RectangleShape2D" id=4]
 extents = Vector2( 238.015, 43.3344 )
 
 [node name="DEV" type="Node2D"]
@@ -31,7 +31,7 @@ contact_monitor = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RigidBody2D"]
 position = Vector2( 572.655, 10.7631 )
-shape = SubResource( 4 )
+shape = SubResource( 1 )
 
 [node name="RigidBody2D2" type="RigidBody2D" parent="."]
 mode = 1
@@ -42,7 +42,7 @@ contact_monitor = true
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RigidBody2D2"]
 position = Vector2( 510.988, 590.877 )
 scale = Vector2( 51, 1 )
-shape = SubResource( 5 )
+shape = SubResource( 2 )
 
 [node name="RigidBody2D3" type="RigidBody2D" parent="."]
 mode = 1
@@ -53,7 +53,7 @@ contact_monitor = true
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RigidBody2D3"]
 position = Vector2( 1012.93, 304.483 )
 scale = Vector2( 1, 30 )
-shape = SubResource( 6 )
+shape = SubResource( 3 )
 
 [node name="RigidBody2D4" type="RigidBody2D" parent="."]
 mode = 1
@@ -64,7 +64,7 @@ contact_monitor = true
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RigidBody2D4"]
 position = Vector2( 9.04407, 321.063 )
 scale = Vector2( 1, 30 )
-shape = SubResource( 6 )
+shape = SubResource( 3 )
 
 [node name="RigidBody2D5" type="RigidBody2D" parent="."]
 mode = 1
@@ -74,4 +74,4 @@ contact_monitor = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RigidBody2D5"]
 position = Vector2( 285.369, 158.415 )
-shape = SubResource( 7 )
+shape = SubResource( 4 )

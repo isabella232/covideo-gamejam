@@ -62,7 +62,7 @@ func _move():
 	
 func _get_direction_to_target():
 	if target != null:
-		return target.position - self.position
+		return target.global_position - global_position
 	else:
 		print("target is null!")
 		return Vector2(1,1)
@@ -86,11 +86,6 @@ func _on_think_timer_timeout():
 	
 func _physics_process(delta):
 	var space_state = $KinematicBody2D/CollisionShape2D.get_world_2d().direct_space_state
-	result_up = space_state.intersect_ray(self.position, Vector2(position.x, position.y + 50))
-	result_right = space_state.intersect_ray(self.position, Vector2(position.x + 50, position.y))
-	result_down = space_state.intersect_ray(self.position, Vector2(position.x, position.y - 50))
-	result_left = space_state.intersect_ray(self.position, Vector2(position.x - 50, position.y))
-	
 
 func _calculate_route(targetdirection):
 	if (result_up == null || result_down == null || result_right == null ||result_left == null):

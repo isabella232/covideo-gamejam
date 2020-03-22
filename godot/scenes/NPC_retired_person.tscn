@@ -21,14 +21,14 @@ animations = [ {
 "name": "right",
 "speed": 1.0
 }, {
-"frames": [ ExtResource( 1 ) ],
-"loop": true,
-"name": "back",
-"speed": 1.0
-}, {
 "frames": [ ExtResource( 2 ) ],
 "loop": true,
 "name": "front",
+"speed": 1.0
+}, {
+"frames": [ ExtResource( 1 ) ],
+"loop": true,
+"name": "back",
 "speed": 1.0
 } ]
 
@@ -36,6 +36,9 @@ animations = [ {
 script = ExtResource( 4 )
 
 [node name="KinematicBody2D" type="KinematicBody2D" parent="."]
+
+[node name="RemoteTransform2D" type="RemoteTransform2D" parent="KinematicBody2D"]
+remote_path = NodePath("../..")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="KinematicBody2D"]
 shape = SubResource( 1 )
