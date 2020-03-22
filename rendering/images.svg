@@ -30,9 +30,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.28508466"
-     inkscape:cx="1026.5087"
-     inkscape:cy="296.11811"
+     inkscape:zoom="0.32778817"
+     inkscape:cx="160.46271"
+     inkscape:cy="258.849"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -294,6 +294,89 @@
        inkscape:transform-center-x="28.908408"
        inkscape:transform-center-y="-2.5271478"
        transform="matrix(0.5815717,0.30424884,-0.30424884,0.5815717,181.41821,-370.44632)"
+       inkscape:export-xdpi="72"
+       inkscape:export-ydpi="72" />
+    <rect
+       style="opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.8424263;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4194-2"
+       width="793.37994"
+       height="211.1478"
+       x="-832.67108"
+       y="705.57037"
+       inkscape:export-xdpi="72"
+       inkscape:export-ydpi="72" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="-825.76123"
+       y="804.16455"
+       id="text4178"
+       sodipodi:linespacing="125%"
+       inkscape:export-xdpi="72"
+       inkscape:export-ydpi="72"><tspan
+         sodipodi:role="line"
+         id="tspan4180"
+         x="-825.76123"
+         y="804.16455"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:90px;font-family:'Sitka Small';-inkscape-font-specification:'Sitka Small';fill:#ff0000">Global Outbreak!</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="-670.89777"
+       y="880.95825"
+       id="text4178-7"
+       sodipodi:linespacing="125%"
+       inkscape:export-xdpi="72"
+       inkscape:export-ydpi="72"><tspan
+         sodipodi:role="line"
+         id="tspan4180-0"
+         x="-670.89777"
+         y="880.95825"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:70px;font-family:'Sitka Small';-inkscape-font-specification:'Sitka Small';fill:#ffffff;stroke:#000000">Stay at home</tspan></text>
+    <rect
+       style="opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.83103979;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4194-2-2"
+       width="772.03607"
+       height="211.15918"
+       x="-19.460255"
+       y="834.53522"
+       inkscape:export-xdpi="72"
+       inkscape:export-ydpi="72" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="-753.96637"
+       y="1105.5792"
+       id="text4178-6"
+       sodipodi:linespacing="125%"
+       inkscape:export-xdpi="72"
+       inkscape:export-ydpi="72"><tspan
+         sodipodi:role="line"
+         id="tspan4180-9"
+         x="-753.96637"
+         y="1105.5792"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:90px;font-family:'Sitka Small';-inkscape-font-specification:'Sitka Small';fill:#ff0000">Global Crisis!</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="-812.39673"
+       y="1198.5725"
+       id="text4178-7-2"
+       sodipodi:linespacing="125%"
+       inkscape:export-xdpi="72"
+       inkscape:export-ydpi="72"><tspan
+         sodipodi:role="line"
+         x="-812.39673"
+         y="1198.5725"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:70px;font-family:'Sitka Small';-inkscape-font-specification:'Sitka Small';fill:#ffffff;stroke:#000000"
+         id="tspan4227">Missing Toilet Paper</tspan></text>
+    <rect
+       style="opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.8424263;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4194-2-9"
+       width="793.37994"
+       height="211.1478"
+       x="-832.94727"
+       y="998.65106"
        inkscape:export-xdpi="72"
        inkscape:export-ydpi="72" />
   </g>
