@@ -2,11 +2,12 @@ package de.lostmekka.covidjam.backend
 
 import de.lostmekka.covidjam.backend.levelgen.MutableLevel
 import de.lostmekka.covidjam.backend.levelgen.Rect
-import de.lostmekka.covidjam.backend.levelgen.generator.borderGenerator
-import de.lostmekka.covidjam.backend.levelgen.generator.floorGenerator
-import de.lostmekka.covidjam.backend.levelgen.generator.roomGenerator
+import de.lostmekka.covidjam.backend.levelgen.combine
+import de.lostmekka.covidjam.backend.levelgen.fromRange
+import de.lostmekka.covidjam.backend.levelgen.generator.customGenerator
 import de.lostmekka.covidjam.backend.levelgen.generator.shelveAreaGenerator
 import de.lostmekka.covidjam.backend.levelgen.printDebug
+import kotlin.math.roundToInt
 import kotlin.random.Random
 
 data class LevelGenerationInput(
@@ -26,7 +27,12 @@ data class Tile(
     val pos: Point,
     val type: Type
 ) {
-    enum class Type { Floor, Wall, Door }
+    enum class Type {
+        FloorTiles1, FloorTiles2, FloorTiles3,
+        FloorStone1, FloorStone2,
+        Wall1, Wall2, Wall3, Wall4, Wall5, Wall6, Wall7, Wall8, Wall9,
+        DoorHorizontal, DoorVertical
+    }
 }
 
 data class Entity(
@@ -44,17 +50,89 @@ object LevelGeneration : BackendEndpoint<LevelGenerationInput, LevelGenerationOu
     override val path = "level/generate"
 
     private fun createGenerator() =
-        roomGenerator(
-            inner = borderGenerator(
-                innerGenerator = shelveAreaGenerator(
-                    horizontal = Random.nextBoolean(),
-                    corridorWidth = (1..3).random(),
-                    doubleShelveColumn = Random.nextBoolean(),
-                    useTallShelves = Random.nextBoolean()
-                ),
-                borderGenerator = floorGenerator()
+        customGenerator {
+            val levelBounds = area.bounds
+            val levelInsideRect = levelBounds.withAlteredSize(-1)
+            val levelBorderArea = levelBounds - levelInsideRect
+
+            val entranceHeight = 4
+            val entranceWidth = 6
+            val minEntranceStart = 1
+            val maxEntranceStart = level.bounds.w - 2 - entranceWidth
+            val entranceStart =
+                if (maxEntranceStart <= minEntranceStart) minEntranceStart
+                else Random.fromRange(minEntranceStart, maxEntranceStart)
+            val entranceRect = Rect(
+                x = entranceStart,
+                y = levelBounds.yEnd - entranceHeight,
+                w = entranceWidth,
+                h = entranceHeight
             )
-        )
+            val (entranceRectLeft, entranceRectCenter, entranceRectRight) = entranceRect.split(
+                horizontally = false,
+                lengths = listOf(2, 2, 2)
+            )
+            val normalWallArea = levelBorderArea - entranceRectCenter
+            val entranceDoorArea = levelBorderArea intersect entranceRectCenter
+            val entranceFloorArea = entranceRectLeft + entranceRectRight - levelBorderArea
+            val entranceCorridorArea = entranceRectCenter - levelBorderArea
+
+            val openAreaWidth = Random.fromRange(5, levelBounds.w / 2)
+            val openAreaHeight = Random.fromRange(4, (levelBounds.w * 0.4).roundToInt())
+            val minOpenAreaStart = 1
+            val maxOpenAreaStart = level.bounds.w - 2 - entranceWidth
+            val openAreaStart =
+                if (maxOpenAreaStart <= minOpenAreaStart) minOpenAreaStart
+                else Random.fromRange(minOpenAreaStart, maxOpenAreaStart)
+            val openAreaRect = Rect(
+                x = openAreaStart,
+                y = levelBounds.yEnd - 1 - openAreaHeight,
+                w = openAreaWidth,
+                h = openAreaHeight
+            )
+            val openArea = (openAreaRect intersect levelInsideRect) - entranceRect
+
+            val shelveAreas = levelInsideRect
+                .withAlteredSize(-1)
+                .splitRandomly(
+                    horizontally = false,
+                    borderWidth = 1,
+                    minSize = 5,
+                    maxSize = 15,
+                    includeBorderRects = false
+                )
+                .flatMap {
+                    if (Random.nextDouble() < 0.3) {
+                        it.splitRandomly(
+                            horizontally = true,
+                            borderWidth = 1,
+                            minSize = 5,
+                            maxSize = 15,
+                            includeBorderRects = false
+                        )
+                    } else {
+                        listOf(it)
+                    }
+                }
+            val combinedShelveArea = shelveAreas.combine()
+            val shelveCorridorArea = levelInsideRect.minus(entranceRect, openAreaRect, combinedShelveArea)
+
+            for (shelveArea in shelveAreas) {
+                shelveAreaGenerator(
+                    horizontal = Random.nextBoolean(),
+                    useTallShelves = Random.nextBoolean(),
+                    doubleShelveColumn = Random.nextBoolean(),
+                    corridorWidth = 2
+                ).generate(shelveArea)
+            }
+            shelveCorridorArea.fill(Tile.Type.FloorTiles1)
+            openArea.fill(Tile.Type.FloorTiles2)
+            normalWallArea.fill(Tile.Type.Wall1)
+            entranceFloorArea.fill(Tile.Type.FloorTiles3)
+            entranceCorridorArea.fill(Tile.Type.FloorTiles1)
+            entranceDoorArea.fill(Tile.Type.DoorHorizontal)
+            level.entrancePoints += entranceDoorArea
+        }
 
     override fun handleRequest(input: LevelGenerationInput): LevelGenerationOutput {
         val bounds = Rect(0, 0, input.levelSize.w, input.levelSize.h)

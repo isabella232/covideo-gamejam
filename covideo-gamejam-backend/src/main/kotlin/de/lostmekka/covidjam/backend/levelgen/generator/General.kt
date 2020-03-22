@@ -47,9 +47,19 @@ fun borderGenerator(
 }
 
 fun customGenerator(
-    generator: (area: Area, level: MutableLevel) -> Unit
+    generator: CustomGeneratorDslBody.() -> Unit
 ) = object : Generator {
     override fun generate(area: Area, level: MutableLevel) {
-        generator(area, level)
+        CustomGeneratorDslBody(area, level).generator()
     }
+}
+
+class CustomGeneratorDslBody(
+    val area: Area,
+    val level: MutableLevel
+) {
+    fun Generator.generate() = generate(area, level)
+    fun Generator.generate(area: Area) = generate(area, level)
+    fun fill(tileType: Tile.Type) = fillGenerator(tileType).generate(area, level)
+    fun Area.fill(tileType: Tile.Type) = fillGenerator(tileType).generate(this, level)
 }

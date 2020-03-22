@@ -1,8 +1,11 @@
 package de.lostmekka.covidjam.backend.levelgen
 
 import de.lostmekka.covidjam.backend.Entity
+import de.lostmekka.covidjam.backend.Entity.Type.*
 import de.lostmekka.covidjam.backend.Point
 import de.lostmekka.covidjam.backend.Tile
+import de.lostmekka.covidjam.backend.Tile.Type.*
+import kotlin.random.Random
 
 fun Point.toTile(type: Tile.Type) = Tile(this, type)
 
@@ -15,17 +18,31 @@ fun List<Entity>.addEntitiesToLevel(level: MutableLevel) {
 }
 
 object TypeGroups {
-    object Shelve {
-        val smallShelves = listOf(Entity.Type.ShelveSmall1, Entity.Type.ShelveSmall2, Entity.Type.ShelveSmall3)
-        val tall = listOf(Entity.Type.ShelveTall1, Entity.Type.ShelveTall2, Entity.Type.ShelveTall3)
+    object wall {
+        val all = listOf(Wall1,Wall2,Wall3,Wall4,Wall5,Wall6,Wall7,Wall8,Wall9)
     }
-    object ToiletPaper {
+
+    object floor {
+        val tiles = listOf(FloorTiles1,FloorTiles2, FloorTiles3)
+        val stone = listOf(FloorStone1,FloorStone2)
+        val all = tiles + stone
+    }
+
+    object shelve {
+        val small = listOf(ShelveSmall1, ShelveSmall2, ShelveSmall3)
+        val tall = listOf(ShelveTall1, ShelveTall2, ShelveTall3)
+        val all = small + tall
+    }
+
+    object toiletPaper {
         val all = listOf(
-            Entity.Type.PaperRollScrappy,
-            Entity.Type.PaperRollBad,
-            Entity.Type.PaperRollGood,
-            Entity.Type.PaperRollPrint,
-            Entity.Type.PaperRollScented
+            PaperRollScrappy,
+            PaperRollBad,
+            PaperRollGood,
+            PaperRollPrint,
+            PaperRollScented
         )
     }
 }
+
+fun Random.fromRange(start: Int, endInclusive: Int) = nextInt(start, endInclusive + 1)

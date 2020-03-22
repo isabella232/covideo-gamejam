@@ -10,7 +10,8 @@ import kotlin.random.Random
 class MutableLevel(
     val bounds: Rect,
     tiles: List<Tile> = listOf(),
-    entities: List<Entity> = listOf()
+    entities: List<Entity> = listOf(),
+    val entrancePoints: MutableList<Point> = mutableListOf()
 ) {
     private val tilesInternal: MutableMap<Point, Tile> = tiles.associateBy { it.pos }.toMutableMap()
     private val entitiesInternal: MutableList<Entity> = entities.toMutableList()
@@ -46,7 +47,12 @@ abstract class Area : Iterable<Point> {
     abstract operator fun contains(point: Point): Boolean
     operator fun plus(other: Area) = PointCloud(filter { it !in other }.toSet())
     operator fun minus(other: Area) = PointCloud(toSet() - other.toSet())
+    fun minus(others: Iterable<Area>) = PointCloud(toSet() - others.flatten().toSet())
+    fun minus(vararg others: Area) = minus(others.asIterable())
+    infix fun intersect(other: Area) = PointCloud(toSet() intersect other.toSet())
 }
+
+fun Iterable<Area>.combine() = PointCloud(flatten().toSet())
 
 class PointCloud(val points: Set<Point>) : Area() {
     // TODO: hide Area implementations behind interfaces and provide factory functions.
@@ -98,6 +104,20 @@ open class Rect(
     infix fun touches(other: Rect) =
         (this overlapsWithX other && this touchesX other) || (this overlapsWithY other && this touchesY other)
 
+    fun withAlteredSize(amount: Int) = withAlteredSize(amount, amount, amount, amount)
+
+    fun withAlteredSize(
+        right: Int,
+        top: Int,
+        left: Int,
+        bottom: Int
+    ) = Rect(
+        x = x - left,
+        y = y - top,
+        w = w + left + right,
+        h = h + top + bottom
+    )
+
     fun split(
         horizontally: Boolean,
         at: Int,
@@ -146,7 +166,8 @@ open class Rect(
         horizontally: Boolean,
         minSize: Int,
         maxSize: Int,
-        borderWidth: Int
+        borderWidth: Int,
+        includeBorderRects: Boolean
     ): List<Rect> {
         if (borderWidth < 0) throw IllegalArgumentException("border width must not be negative")
         val relevantLength = if (horizontally) h else w
@@ -155,10 +176,10 @@ open class Rect(
         val maxChunkCount = (relevantLength - borderWidth) / (maxSize + borderWidth)
         val chunkCount = when {
             minChunkCount >= maxChunkCount -> minChunkCount
-            else -> Random.nextInt(minChunkCount, maxChunkCount + 1)
+            else -> Random.fromRange(minChunkCount, maxChunkCount)
         }
         if (chunkCount <= 1) return listOf(this)
-        val lengths = IntArray(chunkCount) { Random.nextInt(minSize, maxSize + 1) }
+        val lengths = IntArray(chunkCount) { Random.fromRange(minSize, maxSize) }
 
         val currentTotalLength = lengths.sum() + (chunkCount - 1) * borderWidth
         val lengthDiff = relevantLength - currentTotalLength
@@ -184,7 +205,11 @@ open class Rect(
         val finalLengths = lengths
             .flatMap { listOf(it, borderWidth) }
             .dropLast(1)
-        return split(horizontally, finalLengths)
+        return if (includeBorderRects) {
+            split(horizontally, finalLengths)
+        } else {
+            split(horizontally, finalLengths).filterIndexed { index, _ -> index % 2 == 1 }
+        }
     }
 }
 

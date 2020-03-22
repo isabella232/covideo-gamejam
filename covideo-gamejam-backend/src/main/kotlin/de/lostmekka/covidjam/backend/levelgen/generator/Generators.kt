@@ -8,13 +8,13 @@ import de.lostmekka.covidjam.backend.levelgen.Generator
 import de.lostmekka.covidjam.backend.levelgen.MutableLevel
 import de.lostmekka.covidjam.backend.levelgen.TypeGroups
 
-fun floorGenerator() = fillGenerator(Tile.Type.Floor)
+fun floorGenerator() = fillGenerator(Tile.Type.FloorTiles1)
 
 fun roomGenerator(
     inner: Generator
 ) = borderGenerator(
     innerGenerator = inner,
-    borderGenerator = fillGenerator(Tile.Type.Wall)
+    borderGenerator = fillGenerator(Tile.Type.Wall1)
 )
 
 fun shelveAreaGenerator(
@@ -26,7 +26,7 @@ fun shelveAreaGenerator(
     override fun generate(area: Area, level: MutableLevel) {
         floorGenerator().generate(area, level)
 
-        val entityTypes = if (useTallShelves) TypeGroups.Shelve.tall else TypeGroups.Shelve.smallShelves
+        val entityTypes = if (useTallShelves) TypeGroups.shelve.tall else TypeGroups.shelve.small
         val bounds = area.bounds
         val columnWidth = if (doubleShelveColumn) 2 else 1
         val totalCorridorWidth = corridorWidth + columnWidth
