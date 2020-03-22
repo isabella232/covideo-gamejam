@@ -5,13 +5,13 @@
 [ext_resource path="res://assets/Sprite_PC_female2_back.png" type="Texture" id=3]
 [ext_resource path="res://scripts/Player.gd" type="Script" id=4]
 
-[sub_resource type="CapsuleShape2D" id=8]
+[sub_resource type="CapsuleShape2D" id=1]
 height = 5.89713
 
-[sub_resource type="CapsuleShape2D" id=9]
+[sub_resource type="CapsuleShape2D" id=2]
 height = 6.1969
 
-[sub_resource type="SpriteFrames" id=10]
+[sub_resource type="SpriteFrames" id=3]
 resource_name = "player_sprite_anim"
 animations = [ {
 "frames": [ ExtResource( 2 ) ],
@@ -36,13 +36,13 @@ script = ExtResource( 4 )
 [node name="KinematicBody2D" type="KinematicBody2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="KinematicBody2D"]
-shape = SubResource( 8 )
+shape = SubResource( 1 )
 
 [node name="Area2D" type="Area2D" parent="KinematicBody2D"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="KinematicBody2D/Area2D"]
-shape = SubResource( 9 )
+shape = SubResource( 2 )
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="KinematicBody2D"]
-frames = SubResource( 10 )
+frames = SubResource( 3 )
 animation = "front"

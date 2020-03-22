@@ -1,4 +1,5 @@
 extends Character
+class_name Player
 
 func _process(delta):
 	var velocity = Vector2() 

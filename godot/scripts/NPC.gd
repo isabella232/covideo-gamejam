@@ -1,4 +1,5 @@
 extends Character
+class_name NPC
 
 var tile_size = 5
 
@@ -18,20 +19,21 @@ func _ready():
 	_setup_npc_think_time_timer()
 	_setup_npc_type()
 	_find_target()
-
-
+	add_to_group("npcs")
 #func _process(delta):
 #	pass
 
 
 func _on_collision(colliding_body):
-	print("npc collision " + colliding_body.name)
+	pass 
+	#print("npc collision " + colliding_body.name)
 
 func _setup_npc_type():
 	match npc_type:
 		"retired_person":
 			speed = 90
 			strength = 5
+			
 		"yolo_hipster":
 			speed = 120
 			strength = 10
@@ -42,16 +44,12 @@ func _setup_npc_type():
 
 
 func _find_target():
-	var scene_parent = self.find_parent("DEV")
-	if scene_parent == null:
-		print("could not find scene")
+	var target_object = get_tree().get_root().get_node("Player")
+	if target_object == null:
+		print("could not find target")
 	else:
-		var target_object = scene_parent.find_node("Player")
-		if target_object == null:
-			print("could not find target")
-		else:
-			print(target_object.name)
-			target = target_object.get_child(0)
+		print(target_object.name)
+		target = target_object.get_child(0)
 
 
 func _move():
@@ -76,7 +74,7 @@ func _setup_npc_think_time_timer():
 	npc_think_timer.connect("timeout", self, "_on_think_timer_timeout")
 	add_child(npc_think_timer)
 	npc_think_timer.start()
-	print("npc timer set up")
+	#print("npc timer set up")
 
 func _on_think_timer_timeout():
 	#print("npc timeout")
