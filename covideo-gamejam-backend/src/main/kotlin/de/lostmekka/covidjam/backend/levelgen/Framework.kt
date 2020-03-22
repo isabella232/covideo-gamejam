@@ -5,6 +5,7 @@ import de.lostmekka.covidjam.backend.Point
 import de.lostmekka.covidjam.backend.Tile
 import kotlin.math.abs
 import kotlin.math.min
+import kotlin.random.Random
 
 class MutableLevel(
     val bounds: Rect,
@@ -139,6 +140,51 @@ open class Rect(
         } else {
             rectCoords.map { (x1, x2) -> Rect(x + x1, y, x2 - x1, h) }
         }
+    }
+
+    fun splitRandomly(
+        horizontally: Boolean,
+        minSize: Int,
+        maxSize: Int,
+        borderWidth: Int
+    ): List<Rect> {
+        if (borderWidth < 0) throw IllegalArgumentException("border width must not be negative")
+        val relevantLength = if (horizontally) h else w
+
+        val minChunkCount = (relevantLength - borderWidth) / (minSize + borderWidth)
+        val maxChunkCount = (relevantLength - borderWidth) / (maxSize + borderWidth)
+        val chunkCount = when {
+            minChunkCount >= maxChunkCount -> minChunkCount
+            else -> Random.nextInt(minChunkCount, maxChunkCount + 1)
+        }
+        if (chunkCount <= 1) return listOf(this)
+        val lengths = IntArray(chunkCount) { Random.nextInt(minSize, maxSize + 1) }
+
+        val currentTotalLength = lengths.sum() + (chunkCount - 1) * borderWidth
+        val lengthDiff = relevantLength - currentTotalLength
+        if (lengthDiff > 0) {
+            repeat(lengthDiff) {
+                val index = lengths
+                    .mapIndexed { index, length -> if (length < maxSize) index else null }
+                    .filterNotNull()
+                    .random()
+                lengths[index]++
+            }
+        }
+        if (lengthDiff < 0) {
+            repeat(-lengthDiff) {
+                val index = lengths
+                    .mapIndexed { index, length -> if (length > minSize) index else null }
+                    .filterNotNull()
+                    .random()
+                lengths[index]--
+            }
+        }
+
+        val finalLengths = lengths
+            .flatMap { listOf(it, borderWidth) }
+            .dropLast(1)
+        return split(horizontally, finalLengths)
     }
 }
 
