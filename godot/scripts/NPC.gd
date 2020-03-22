@@ -4,7 +4,7 @@ var npc_think_time = 0.7
 var npc_think_timer = null
 var movement_direction
 
-export var speed = 70
+
 var target : Node = null
 
 var result_up
@@ -70,11 +70,11 @@ func _on_think_timer_timeout():
 	
 func _physics_process(delta):
 	#return Vector2(1,1)
-	#var space_state = get_world2D().direct_space_state
-	#result_up = space_state.intersect_ray(self.position, Vector2(position.x, position.y + 50))
-	#result_right = space_state.intersect_ray(self.position, Vector2(position.x + 50, position.y))
-	#result_down = space_state.intersect_ray(self.position, Vector2(position.x, position.y - 50))
-	#result_left = space_state.intersect_ray(self.position, Vector2(position.x - 50, position.y))
+	var space_state = $KinematicBody2D/CollisionShape2D.get_world_2d().direct_space_state
+	result_up = space_state.intersect_ray(self.position, Vector2(position.x, position.y + 50))
+	result_right = space_state.intersect_ray(self.position, Vector2(position.x + 50, position.y))
+	result_down = space_state.intersect_ray(self.position, Vector2(position.x, position.y - 50))
+	result_left = space_state.intersect_ray(self.position, Vector2(position.x - 50, position.y))
 
 func _calculate_route():
 	pass

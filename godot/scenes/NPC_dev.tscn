@@ -95,19 +95,6 @@ shape = SubResource( 1 )
 [node name="CollisionShape2D" type="CollisionShape2D" parent="NPC/KinematicBody2D/Area2D"]
 shape = SubResource( 2 )
 
-[node name="Raycasts" type="Node" parent="NPC/KinematicBody2D"]
-
-[node name="RayCast_up" type="RayCast2D" parent="NPC/KinematicBody2D/Raycasts"]
-cast_to = Vector2( 0, -50 )
-
-[node name="RayCast_right" type="RayCast2D" parent="NPC/KinematicBody2D/Raycasts"]
-cast_to = Vector2( 50, 0 )
-
-[node name="RayCast_down" type="RayCast2D" parent="NPC/KinematicBody2D/Raycasts"]
-
-[node name="RayCast_left" type="RayCast2D" parent="NPC/KinematicBody2D/Raycasts"]
-cast_to = Vector2( -50, 0 )
-
 [node name="AnimatedSprite" type="AnimatedSprite" parent="NPC/KinematicBody2D"]
 frames = SubResource( 3 )
 animation = "right"

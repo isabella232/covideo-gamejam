@@ -1,7 +1,7 @@
-# base class for characters
 extends Node
 
-var position
+var position = Vector2(0, 0)
+export var speed = 70
 
 func _ready():
 	var collision_listener = $KinematicBody2D/Area2D.connect("body_entered", self, "_on_collision")
