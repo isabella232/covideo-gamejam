@@ -8,9 +8,26 @@
 
 config_version=4
 
-_global_script_classes=[  ]
+_global_script_classes=[ {
+"base": "Node",
+"class": "Character",
+"language": "GDScript",
+"path": "res://scripts/Character.gd"
+}, {
+"base": "Character",
+"class": "NPC",
+"language": "GDScript",
+"path": "res://scripts/NPC.gd"
+}, {
+"base": "Character",
+"class": "Player",
+"language": "GDScript",
+"path": "res://scripts/Player.gd"
+} ]
 _global_script_class_icons={
-
+"Character": "",
+"NPC": "",
+"Player": ""
 }
 
 [application]

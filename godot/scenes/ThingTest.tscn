@@ -3,7 +3,7 @@
 [ext_resource path="res://assets/Toilet_paper_print.png" type="Texture" id=1]
 [ext_resource path="res://assets/Lager_TileHigh_1.png" type="Texture" id=2]
 
-[sub_resource type="GDScript" id=2]
+[sub_resource type="GDScript" id=1]
 script/source = "extends Node2D
 
 export var throw_factor = 30
@@ -23,7 +23,7 @@ func _throw(dest: Vector2):
 	thing.apply_impulse(Vector2(0, -0.1), impulse)
 "
 
-[sub_resource type="CapsuleShape2D" id=1]
+[sub_resource type="CapsuleShape2D" id=2]
 radius = 3.99147
 height = 1.13052
 
@@ -33,7 +33,7 @@ height = 1.13052
 extents = Vector2( 8.3712, 13.5179 )
 
 [node name="ThingTest" type="Node2D"]
-script = SubResource( 2 )
+script = SubResource( 1 )
 throw_factor = 60
 
 [node name="YSort" type="YSort" parent="."]
@@ -44,7 +44,7 @@ angular_damp = 0.5
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="YSort/Thing"]
 position = Vector2( -0.230507, 0.461029 )
-shape = SubResource( 1 )
+shape = SubResource( 2 )
 
 [node name="Sprite" type="Sprite" parent="YSort/Thing"]
 texture = ExtResource( 1 )
