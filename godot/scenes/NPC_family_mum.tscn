@@ -1,0 +1,51 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://scripts/NPC.gd" type="Script" id=1]
+[ext_resource path="res://assets/Sprite_PC_female_back.png" type="Texture" id=2]
+[ext_resource path="res://assets/Sprite_PC_female_front.png" type="Texture" id=3]
+[ext_resource path="res://assets/Sprite_PC_female_side.png" type="Texture" id=4]
+
+[sub_resource type="CapsuleShape2D" id=1]
+radius = 7.5696
+height = 9.50877
+
+[sub_resource type="CapsuleShape2D" id=2]
+radius = 7.71948
+height = 8.90921
+
+[sub_resource type="SpriteFrames" id=3]
+resource_name = "npc_sprite_anim"
+animations = [ {
+"frames": [ ExtResource( 4 ) ],
+"loop": true,
+"name": "right",
+"speed": 1.0
+}, {
+"frames": [ ExtResource( 2 ) ],
+"loop": true,
+"name": "back",
+"speed": 1.0
+}, {
+"frames": [ ExtResource( 3 ) ],
+"loop": true,
+"name": "front",
+"speed": 1.0
+} ]
+
+[node name="NPC_family_mum" type="Node2D"]
+script = ExtResource( 1 )
+npc_type = "family_mum"
+
+[node name="KinematicBody2D" type="KinematicBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="KinematicBody2D"]
+shape = SubResource( 1 )
+
+[node name="Area2D" type="Area2D" parent="KinematicBody2D"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="KinematicBody2D/Area2D"]
+shape = SubResource( 2 )
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="KinematicBody2D"]
+frames = SubResource( 3 )
+animation = "front"
