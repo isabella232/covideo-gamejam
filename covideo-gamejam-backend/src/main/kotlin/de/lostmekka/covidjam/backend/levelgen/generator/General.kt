@@ -45,3 +45,11 @@ fun borderGenerator(
         borderGenerator.generate(area - innerRect, level)
     }
 }
+
+fun customGenerator(
+    generator: (area: Area, level: MutableLevel) -> Unit
+) = object : Generator {
+    override fun generate(area: Area, level: MutableLevel) {
+        generator(area, level)
+    }
+}
