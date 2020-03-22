@@ -4,7 +4,11 @@ import de.lostmekka.covidjam.backend.Entity
 import de.lostmekka.covidjam.backend.Point
 import de.lostmekka.covidjam.backend.Tile
 import kotlin.math.abs
+import kotlin.math.ceil
+import kotlin.math.floor
+import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 import kotlin.random.Random
 
 class MutableLevel(
@@ -64,14 +68,14 @@ class PointCloud(val points: Set<Point>) : Area() {
         val xMax = xValues.max() ?: 0
         val yMin = yValues.min() ?: 0
         val yMax = yValues.max() ?: 0
-        Rect(xMin, yMin, xMax - xMin, yMax - yMin)
+        Rect(xMin, yMin, xMax - xMin + 1, yMax - yMin + 1)
     }
 
     override fun iterator() = points.iterator()
     override fun contains(point: Point) = point in points
 }
 
-open class Rect(
+data class Rect(
     val x: Int,
     val y: Int,
     val w: Int,
@@ -107,10 +111,10 @@ open class Rect(
     fun withAlteredSize(amount: Int) = withAlteredSize(amount, amount, amount, amount)
 
     fun withAlteredSize(
-        right: Int,
-        top: Int,
-        left: Int,
-        bottom: Int
+        right: Int = 0,
+        top: Int = 0,
+        left: Int = 0,
+        bottom: Int = 0
     ) = Rect(
         x = x - left,
         y = y - top,
@@ -162,6 +166,7 @@ open class Rect(
         }
     }
 
+    @OptIn(ExperimentalStdlibApi::class)
     fun splitRandomly(
         horizontally: Boolean,
         minSize: Int,
@@ -172,8 +177,9 @@ open class Rect(
         if (borderWidth < 0) throw IllegalArgumentException("border width must not be negative")
         val relevantLength = if (horizontally) h else w
 
-        val minChunkCount = (relevantLength - borderWidth) / (minSize + borderWidth)
-        val maxChunkCount = (relevantLength - borderWidth) / (maxSize + borderWidth)
+        val virtualLength = (relevantLength + borderWidth).toDouble()
+        val minChunkCount = max(1, ceil(virtualLength / (maxSize + borderWidth)).roundToInt())
+        val maxChunkCount = max(1, floor(virtualLength / (minSize + borderWidth)).roundToInt())
         val chunkCount = when {
             minChunkCount >= maxChunkCount -> minChunkCount
             else -> Random.fromRange(minChunkCount, maxChunkCount)
@@ -188,8 +194,11 @@ open class Rect(
                 val index = lengths
                     .mapIndexed { index, length -> if (length < maxSize) index else null }
                     .filterNotNull()
-                    .random()
-                lengths[index]++
+                    .randomOrNull()
+                if (index == null) {
+                    println("WARNING: cannot add width to any column: already at maximum for every existing column")
+                }
+                lengths[index ?: 0]++
             }
         }
         if (lengthDiff < 0) {
@@ -197,8 +206,11 @@ open class Rect(
                 val index = lengths
                     .mapIndexed { index, length -> if (length > minSize) index else null }
                     .filterNotNull()
-                    .random()
-                lengths[index]--
+                    .randomOrNull()
+                if (index == null) {
+                    println("WARNING: cannot subtract width to any column: already at maximum for every existing column")
+                }
+                lengths[index ?: 0]--
             }
         }
 
@@ -208,7 +220,7 @@ open class Rect(
         return if (includeBorderRects) {
             split(horizontally, finalLengths)
         } else {
-            split(horizontally, finalLengths).filterIndexed { index, _ -> index % 2 == 1 }
+            split(horizontally, finalLengths).filterIndexed { index, _ -> index % 2 == 0 }
         }
     }
 }

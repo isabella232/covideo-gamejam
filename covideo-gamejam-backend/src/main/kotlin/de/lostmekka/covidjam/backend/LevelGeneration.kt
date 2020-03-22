@@ -68,13 +68,10 @@ object LevelGeneration : BackendEndpoint<LevelGenerationInput, LevelGenerationOu
                 w = entranceWidth,
                 h = entranceHeight
             )
-            val (entranceRectLeft, entranceRectCenter, entranceRectRight) = entranceRect.split(
-                horizontally = false,
-                lengths = listOf(2, 2, 2)
-            )
+            val entranceRectCenter = entranceRect.withAlteredSize(left = -2, right = -2)
             val normalWallArea = levelBorderArea - entranceRectCenter
             val entranceDoorArea = levelBorderArea intersect entranceRectCenter
-            val entranceFloorArea = entranceRectLeft + entranceRectRight - levelBorderArea
+            val entranceFloorArea = entranceRect.minus(entranceRectCenter, levelBorderArea)
             val entranceCorridorArea = entranceRectCenter - levelBorderArea
 
             val openAreaWidth = Random.fromRange(5, levelBounds.w / 2)
@@ -97,22 +94,20 @@ object LevelGeneration : BackendEndpoint<LevelGenerationInput, LevelGenerationOu
                 .splitRandomly(
                     horizontally = false,
                     borderWidth = 1,
-                    minSize = 5,
+                    minSize = 6,
                     maxSize = 15,
                     includeBorderRects = false
                 )
                 .flatMap {
-                    if (Random.nextDouble() < 0.3) {
-                        it.splitRandomly(
-                            horizontally = true,
-                            borderWidth = 1,
-                            minSize = 5,
-                            maxSize = 15,
-                            includeBorderRects = false
-                        )
-                    } else {
-                        listOf(it)
-                    }
+                    val minSize = Random.fromRange(5, 10)
+                    val maxSize = minSize + Random.fromRange(5, 10)
+                    it.splitRandomly(
+                        horizontally = true,
+                        borderWidth = 1,
+                        minSize = minSize,
+                        maxSize = maxSize,
+                        includeBorderRects = false
+                    )
                 }
             val combinedShelveArea = shelveAreas.combine()
             val shelveCorridorArea = levelInsideRect.minus(entranceRect, openAreaRect, combinedShelveArea)
@@ -123,7 +118,7 @@ object LevelGeneration : BackendEndpoint<LevelGenerationInput, LevelGenerationOu
                     useTallShelves = Random.nextBoolean(),
                     doubleShelveColumn = Random.nextBoolean(),
                     corridorWidth = 2
-                ).generate(shelveArea)
+                ).generate(shelveArea.minus(entranceRect, openAreaRect))
             }
             shelveCorridorArea.fill(Tile.Type.FloorTiles1)
             openArea.fill(Tile.Type.FloorTiles2)

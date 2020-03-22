@@ -5,9 +5,13 @@ import de.lostmekka.covidjam.backend.Point
 import de.lostmekka.covidjam.backend.Tile
 import de.lostmekka.covidjam.backend.Tile.Type.*
 
+private fun String.coloredFg(color: Int) = "\u001B[${30 + color % 8}m$this\u001B[0m"
+private fun String.coloredBg(color: Int) = "\u001B[${40 + color % 8}m$this\u001B[0m"
+
+
 private fun Tile.Type.toDebugString() = when (this) {
-    in TypeGroups.floor.all -> ".."
-    in TypeGroups.wall.all -> "WW"
+    in TypeGroups.floor.all -> "..".coloredBg(TypeGroups.floor.all.indexOf(this))
+    in TypeGroups.wall.all -> "WW".coloredFg(TypeGroups.wall.all.indexOf(this))
     DoorHorizontal -> "--"
     DoorVertical -> "|."
     else -> null

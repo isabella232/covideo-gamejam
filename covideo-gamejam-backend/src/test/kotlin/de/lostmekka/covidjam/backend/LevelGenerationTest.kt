@@ -22,7 +22,7 @@ class LevelGenerationTest {
     @Test
     fun testRoot() {
         val input = LevelGenerationInput(
-            levelSize = Dimension(20, 20)
+            levelSize = Dimension(50, 40)
         )
         repeat(10) {
             LevelGeneration.handleRequest(input)
