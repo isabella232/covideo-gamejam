@@ -31,14 +31,14 @@ func _on_collision(colliding_body):
 func _setup_npc_type():
 	match npc_type:
 		"retired_person":
-			speed = 90
+			speed = 2
 			strength = 5
 			
 		"yolo_hipster":
-			speed = 120
+			speed = 4
 			strength = 10
 		"family_mum":
-			speed = 150
+			speed = 6
 			strength = 30
 			npc_think_time = 0.25
 
@@ -47,16 +47,17 @@ func _add_target(newtarget):
 	#print("adding " + newtarget.name)
 	targets.append(newtarget)
 	_find_closest_target()
+	_move()
 
 func _find_closest_target():
 	if targets.size() == 0:
 		print("no targets!")
 		pass
 		
-	var closest_distance = targets[0].global_position - self.global_position
+	var closest_distance = targets[0].global_position.distance_to(self.global_position)
 	var closest_target = targets[0]
 	for target in targets:
-		var distance = target.global_position - self.global_position
+		var distance = target.global_position.distance_to(self.global_position)
 		if (distance < closest_distance):
 			closest_target = target
 			closest_distance = distance
@@ -66,10 +67,8 @@ func _find_closest_target():
 
 func _move():
 	var target_direction = _get_direction_to_target()
-	#var direction_to_move = _calculate_route(target_direction)
-	#var movement_direction = direction_to_move.normalized() * tile_size * speed
 	var movement_direction = target_direction.normalized() * tile_size *speed
-	#print(movement_direction)
+	print(movement_direction)
 	move_and_slide(movement_direction)
 	
 	
@@ -77,8 +76,7 @@ func _get_direction_to_target():
 	if current_target != null:
 		return current_target.global_position - global_position
 	else:
-		print("target is null!")
-		return Vector2(1,1)
+		return Vector2.ZERO
 
 func _setup_npc_think_time_timer():
 	npc_think_timer = Timer.new()
@@ -90,18 +88,44 @@ func _setup_npc_think_time_timer():
 	#print("npc timer set up")
 
 func _on_think_timer_timeout():
+	pass
 	#print("npc timeout")
-	if current_target != null:
-		_move()
-		npc_think_timer.start()
-	else:
-		print("target is null")
+	#if current_target != null:
+	#	_move()
+	#	npc_think_timer.start()
+	#else:
+	#	print("target is null")
 	
-#func _physics_process(delta):
-#	var space_state = $CollisionShape2D.get_world_2d().direct_space_state
-
+func _physics_process(delta):
+	#var movement_offset = _get_direction_to_target().normalized()
+	#var space_state = $CollisionShape2D.get_world_2d().direct_space_state
+	#var result_movement_dir = space_state.intersect_ray(Vector2(0, 0), Vector2(movement_offset.x, movement_offset.y))
+	
+	#if (result_movement_dir):
+		# 45 cw
+	#	var right = movement_offset.rotated(0.78)
+		# 45 ccw
+	#	var left = movement_offset.rotated(5.49)
+	#	var result_right = space_state.intersect_ray(self.global_position, Vector2(right.x * 2, right.y * 2))
+	#	if (!result_right):
+	#		move_and_slide(right)
+	#	else:
+	#		var result_left = space_state.intersect_ray(self.global_position, Vector2(left.x * 2, left.y * 2))
+	#		if (!result_left):
+	#			move_and_slide(left)
+	#		else:
+	#			print("NO WAY OUT!!")
+	_move()
+	
 
 func _calculate_route(targetdirection):
 	if (result_up == null || result_down == null || result_right == null ||result_left == null):
 		return Vector2(0, 0)
 	return targetdirection
+
+
+func _get_random_direction():
+	pass
+	
+	
+	
