@@ -14,9 +14,48 @@ func _ready():
 	var config = { \"levelSize\": { \"w\": 30, \"h\": 30 } }
 	var level = yield($WorldGenClient.level_generate(config), \"completed\")
 	
-	#_debug_show_tileset()
+	# _debug_show_tileset()
+
 	for tile in level.tiles: _process_tile(tile)
 	for entity in level.entities: _process_entity(entity)
+	_update_floor_shadow()
+
+func _update_floor_shadow():
+	var left = Vector2.LEFT
+	var up = Vector2.UP
+	var upleft = up + left
+
+	for v in $WallFloor.get_used_cells():
+		var floor_tile = _as_floor_tile(v)
+		if floor_tile != null:
+			var wl = _is_wall(v + left)
+			var wu = _is_wall(v + up)
+			var sl = _is_shelve(v + left)
+			var su = _is_shelve(v + up)
+			var ul = _is_wall(v + upleft) or _is_shelve(v + upleft)
+			
+			if (wl or sl) and (wu or su): _set_wallfloor(v, floor_tile, 0, 0)
+			elif wl: _set_wallfloor(v, floor_tile, 0, 1)
+			elif sl: _set_wallfloor(v, floor_tile, 2, 0)
+			elif wu or su: _set_wallfloor(v, floor_tile, 1, 0)
+			elif ul: _set_wallfloor(v, floor_tile, 2, 1)
+			else: _set_wallfloor(v, floor_tile, 1, 1)
+		elif _is_wall(v):
+			if _is_wall(v + Vector2.DOWN):
+				_set_walloverlay(v, 4, 0, 0)
+
+func _as_floor_tile(v):
+	var i = $WallFloor.get_cellv(v)
+	if i in [0,5,6,7,8]:
+		return i
+	else:
+		return null
+
+func _is_wall(v):
+	return $WallFloor.get_cellv(v) in [3,4]
+
+func _is_shelve(v):
+	return $Shelves.get_cellv(v) in [0,1,2,6]
 
 func _process_entity(entity):
 	var p = entity.pos
@@ -40,44 +79,40 @@ func _thing(x, y, i, cx, cy):
 	$Things.set_cell(x, y, i, false, false, false, Vector2(cx, cy))
 
 func _process_tile(tile):
-	var idx = [0, 0, 0]
+	var v = tile.pos
 	match tile.type:
-		\"FloorTiles1\": idx = [5, 1, 1]
-		\"FloorTiles2\": idx = [6, 1, 1]
-		\"FloorTiles3\": idx = [7, 1, 1]
-		\"FloorStone1\": idx = [4, 1, 1]
-		\"FloorStone2\": idx = [9, 1, 1]
-		\"Wall1\": idx = [3, 0, 0]
-		\"Wall2\": idx = [3, 1, 0]
-		\"Wall3\": idx = [3, 2, 0]
-		\"Wall4\": idx = [3, 3, 0]
-		\"Wall5\": idx = [3, 4, 0]
-		\"Wall6\": idx = [3, 5, 0]
-		\"Wall7\": idx = [3, 6, 0]
-		\"Wall8\": idx = [3, 7, 0]
-		\"Wall9\": idx = [3, 8, 0]
-		\"DoorHorizontal\": idx = [8, 1, 1]
-		\"DoorVertical\": idx = [8, 1, 1]
+		\"FloorTiles1\": _set_wallfloor(v, 0, 1, 1)
+		\"FloorTiles2\": _set_wallfloor(v, 5, 1, 1)
+		\"FloorTiles3\": _set_wallfloor(v, 6, 1, 1)
+		\"FloorStone1\": _set_wallfloor(v, 7, 1, 1)
+		\"FloorStone2\": _set_wallfloor(v, 8, 1, 1)
+		\"Wall1\": _set_wallfloor(v, 3, 0, 0)
+		\"Wall2\": _set_wallfloor(v, 3, 1, 0)
+		\"Wall3\": _set_wallfloor(v, 3, 2, 0)
+		\"Wall4\": _set_wallfloor(v, 3, 3, 0)
+		\"Wall5\": _set_wallfloor(v, 3, 4, 0)
+		\"Wall6\": _set_wallfloor(v, 3, 5, 0)
+		\"Wall7\": _set_wallfloor(v, 3, 6, 0)
+		\"Wall8\": _set_wallfloor(v, 3, 7, 0)
+		\"Wall9\": _set_wallfloor(v, 3, 8, 0)
+		\"DoorHorizontal\": _set_wallfloor(v, 8, 1, 1)
+		\"DoorVertical\": _set_wallfloor(v, 8, 1, 1)
 		_: print(\"unknown tile type \", tile.type)
-	$WallFloor.set_cell(tile.pos.x, tile.pos.y, idx[0],
-		false, false, false, Vector2(idx[1], idx[2]))
+
+func _set_wallfloor(v, i, cx, cy):
+	$WallFloor.set_cell(v.x, v.y, i, false, false, false, Vector2(cx, cy))
+
+func _set_walloverlay(v, i, cx, cy):
+	$WallOverlay.set_cell(v.x, v.y, i, false, false, false, Vector2(cx, cy))
 
 func _debug_show_tileset():
 	var tile_set = $WallFloor.tile_set
 	for i in tile_set.get_tiles_ids():
-		print(tile_set.tile_get_name(i))
-		
-		if tile_set.tile_get_tile_mode(i) == TileSet.ATLAS_TILE:
-			var region = tile_set.tile_get_region(i)
-			var size = tile_set.autotile_get_size(i)
-			var cx = randi() % int(region.size.x / size.x)
-			var cy = randi() % int(region.size.y / size.y)
-			var coord = Vector2(cx, cy)
-			$WallFloor.set_cell(i, 0, i, false, false, false, coord)
-		elif tile_set.tile_get_tile_mode(i) == TileSet.SINGLE_TILE:
-			$WallFloor.set_cell(i, 0, i)
-	for i in range(10):
-		$WallFloor.set_cell(i, 1, 3, false, false, false, Vector2(8,0))
+		print(i, \" \", tile_set.tile_get_name(i))
+		_set_wallfloor(Vector2(i, 0), i, 1, 1)
+		_set_wallfloor(Vector2(i, 1), i, 0, 1)
+		_set_wallfloor(Vector2(i, 2), i, 1, 0)
+		_set_wallfloor(Vector2(i, 3), i, 0, 0)
 "
 
 [node name="WorldGenTest" type="Node2D"]
@@ -93,6 +128,7 @@ format = 1
 
 [node name="WallOverlay" type="TileMap" parent="."]
 tile_set = ExtResource( 3 )
+cell_size = Vector2( 16, 16 )
 format = 1
 
 [node name="Shelves" type="TileMap" parent="."]
@@ -103,4 +139,5 @@ format = 1
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2( 210.693, 141.495 )
 current = true
+zoom = Vector2( 0.5, 0.5 )
 script = ExtResource( 4 )
