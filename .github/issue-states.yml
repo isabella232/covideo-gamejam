@@ -1,0 +1,6 @@
+openIssueColumns:
+  - To do
+  - In progress
+closedIssueColumns:
+  - Closed
+  - Done
