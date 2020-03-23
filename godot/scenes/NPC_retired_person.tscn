@@ -32,22 +32,17 @@ animations = [ {
 "speed": 1.0
 } ]
 
-[node name="NPC_retired_person" type="Node2D"]
+[node name="NPC_retired_person" type="KinematicBody2D"]
 script = ExtResource( 4 )
 
-[node name="KinematicBody2D" type="KinematicBody2D" parent="."]
-
-[node name="RemoteTransform2D" type="RemoteTransform2D" parent="KinematicBody2D"]
-remote_path = NodePath("../..")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="KinematicBody2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource( 1 )
 
-[node name="Area2D" type="Area2D" parent="KinematicBody2D"]
+[node name="Area2D" type="Area2D" parent="."]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="KinematicBody2D/Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource( 2 )
 
-[node name="AnimatedSprite" type="AnimatedSprite" parent="KinematicBody2D"]
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 3 )
 animation = "front"

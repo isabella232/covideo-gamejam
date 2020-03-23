@@ -21,31 +21,29 @@ animations = [ {
 "name": "right",
 "speed": 1.0
 }, {
-"frames": [ ExtResource( 2 ) ],
-"loop": true,
-"name": "back",
-"speed": 1.0
-}, {
 "frames": [ ExtResource( 3 ) ],
 "loop": true,
 "name": "front",
 "speed": 1.0
+}, {
+"frames": [ ExtResource( 2 ) ],
+"loop": true,
+"name": "back",
+"speed": 1.0
 } ]
 
-[node name="NPC_family_mum" type="Node2D"]
+[node name="NPC_family_mum" type="KinematicBody2D"]
 script = ExtResource( 1 )
 npc_type = "family_mum"
 
-[node name="KinematicBody2D" type="KinematicBody2D" parent="."]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="KinematicBody2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource( 1 )
 
-[node name="Area2D" type="Area2D" parent="KinematicBody2D"]
+[node name="Area2D" type="Area2D" parent="."]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="KinematicBody2D/Area2D"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource( 2 )
 
-[node name="AnimatedSprite" type="AnimatedSprite" parent="KinematicBody2D"]
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 frames = SubResource( 3 )
 animation = "front"

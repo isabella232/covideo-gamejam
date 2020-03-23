@@ -43,7 +43,8 @@ func _process_tiles(tiles: Array):
 			\"Wall1\": idx = [3, 8, 0]
 			\"DoorHorizontal\": idx = [8, 1, 1]
 			_: print(\"unknown tile type \", tile.type)
-		$WallFloor.set_cell(tile.pos.x, tile.pos.y, idx[0], false, false, false, Vector2(idx[1], idx[2]))
+		$WallFloor.set_cell(tile.pos.x, tile.pos.y, idx[0],
+			false, false, false, Vector2(idx[1], idx[2]))
 "
 
 [node name="WorldGenTest" type="Node2D"]
@@ -66,5 +67,5 @@ tile_set = ExtResource( 2 )
 format = 1
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2( 210.693, 141.495 )
+position = Vector2( 233.092, 193.594 )
 current = true

@@ -57,7 +57,7 @@ func _move():
 	var direction_to_move = _calculate_route(target_direction)
 	var movement_direction = direction_to_move.normalized() * tile_size * speed
 	print(movement_direction)
-	$KinematicBody2D.move_and_slide(movement_direction)
+	move_and_slide(movement_direction)
 	
 	
 func _get_direction_to_target():
@@ -85,7 +85,7 @@ func _on_think_timer_timeout():
 		print("target is null")
 	
 func _physics_process(delta):
-	var space_state = $KinematicBody2D/CollisionShape2D.get_world_2d().direct_space_state
+	var space_state = $CollisionShape2D.get_world_2d().direct_space_state
 
 func _calculate_route(targetdirection):
 	if (result_up == null || result_down == null || result_right == null ||result_left == null):

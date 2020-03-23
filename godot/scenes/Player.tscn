@@ -3,11 +3,11 @@
 [ext_resource path="res://frames/Player.tres" type="SpriteFrames" id=1]
 [ext_resource path="res://scripts/Player.gd" type="Script" id=4]
 
-[sub_resource type="CapsuleShape2D" id=2]
+[sub_resource type="CapsuleShape2D" id=1]
 radius = 5.0334
 height = 2.3475
 
-[sub_resource type="CapsuleShape2D" id=3]
+[sub_resource type="CapsuleShape2D" id=2]
 height = 6.1969
 
 [node name="Player" type="KinematicBody2D"]
@@ -23,10 +23,10 @@ playing = true
 visible = false
 position = Vector2( 0, 5.56657 )
 rotation = 1.5708
-shape = SubResource( 2 )
+shape = SubResource( 1 )
 
 [node name="Area2D" type="Area2D" parent="."]
 visible = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-shape = SubResource( 3 )
+shape = SubResource( 2 )
