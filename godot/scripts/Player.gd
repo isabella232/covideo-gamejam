@@ -24,4 +24,5 @@ func _process(delta):
 	move_and_slide(velocity)
 
 func _on_collision(colliding_body):
-	print("player collision " + colliding_body.name)
+	#print("player collision " + colliding_body.name)
+	pass
