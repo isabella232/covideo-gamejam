@@ -38,14 +38,14 @@ points = PoolVector2Array( 0, 0, 16, 0, 16, 16, 0, 16 )
 [resource]
 0/name = "Lager_TileHigh_1.png 0"
 0/texture = ExtResource( 7 )
-0/tex_offset = Vector2( 0, 0 )
+0/tex_offset = Vector2( 0, -16 )
 0/modulate = Color( 1, 1, 1, 1 )
 0/region = Rect2( 0, 0, 16, 32 )
 0/tile_mode = 0
-0/occluder_offset = Vector2( 0, 0 )
-0/navigation_offset = Vector2( 0, 0 )
-0/shape_offset = Vector2( 0, 0 )
-0/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+0/occluder_offset = Vector2( 0, -16 )
+0/navigation_offset = Vector2( 0, -16 )
+0/shape_offset = Vector2( 0, -16 )
+0/shape_transform = Transform2D( 1, 0, 0, 1, 0, -16 )
 0/shape = SubResource( 1 )
 0/shape_one_way = false
 0/shape_one_way_margin = 1.0
@@ -54,19 +54,19 @@ points = PoolVector2Array( 0, 0, 16, 0, 16, 16, 0, 16 )
 "one_way": false,
 "one_way_margin": 1.0,
 "shape": SubResource( 1 ),
-"shape_transform": Transform2D( 1, 0, 0, 1, 0, 0 )
+"shape_transform": Transform2D( 1, 0, 0, 1, 0, -16 )
 } ]
 0/z_index = 0
 1/name = "Lager_TileHigh_3.png 1"
 1/texture = ExtResource( 2 )
-1/tex_offset = Vector2( 0, 0 )
+1/tex_offset = Vector2( 0, -16 )
 1/modulate = Color( 1, 1, 1, 1 )
 1/region = Rect2( 0, 0, 16, 32 )
 1/tile_mode = 0
-1/occluder_offset = Vector2( 0, 0 )
-1/navigation_offset = Vector2( 0, 0 )
-1/shape_offset = Vector2( 0, 0 )
-1/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+1/occluder_offset = Vector2( 0, -16 )
+1/navigation_offset = Vector2( 0, -16 )
+1/shape_offset = Vector2( 0, -16 )
+1/shape_transform = Transform2D( 1, 0, 0, 1, 0, -16 )
 1/shape = SubResource( 2 )
 1/shape_one_way = false
 1/shape_one_way_margin = 1.0
@@ -75,19 +75,19 @@ points = PoolVector2Array( 0, 0, 16, 0, 16, 16, 0, 16 )
 "one_way": false,
 "one_way_margin": 1.0,
 "shape": SubResource( 2 ),
-"shape_transform": Transform2D( 1, 0, 0, 1, 0, 0 )
+"shape_transform": Transform2D( 1, 0, 0, 1, 0, -16 )
 } ]
 1/z_index = 0
 2/name = "Lager_TileHigh_empty.png 2"
 2/texture = ExtResource( 4 )
-2/tex_offset = Vector2( 0, 0 )
+2/tex_offset = Vector2( 0, -16 )
 2/modulate = Color( 1, 1, 1, 1 )
 2/region = Rect2( 0, 0, 16, 32 )
 2/tile_mode = 0
-2/occluder_offset = Vector2( 0, 0 )
-2/navigation_offset = Vector2( 0, 0 )
-2/shape_offset = Vector2( 0, 0 )
-2/shape_transform = Transform2D( 1, 0, 0, 1, 0, 0 )
+2/occluder_offset = Vector2( 0, -16 )
+2/navigation_offset = Vector2( 0, -16 )
+2/shape_offset = Vector2( 0, -16 )
+2/shape_transform = Transform2D( 1, 0, 0, 1, 0, -16 )
 2/shape = SubResource( 3 )
 2/shape_one_way = false
 2/shape_one_way_margin = 1.0
@@ -96,7 +96,7 @@ points = PoolVector2Array( 0, 0, 16, 0, 16, 16, 0, 16 )
 "one_way": false,
 "one_way_margin": 1.0,
 "shape": SubResource( 3 ),
-"shape_transform": Transform2D( 1, 0, 0, 1, 0, 0 )
+"shape_transform": Transform2D( 1, 0, 0, 1, 0, -16 )
 } ]
 2/z_index = 0
 3/name = "Lager_Tilesmall_1.png 3"
