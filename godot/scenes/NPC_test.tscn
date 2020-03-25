@@ -1,10 +1,9 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://scripts/NPC_dev.gd" type="Script" id=1]
 [ext_resource path="res://scenes/Player.tscn" type="PackedScene" id=2]
 [ext_resource path="res://tilesets/Shelves.tres" type="TileSet" id=3]
 [ext_resource path="res://tilesets/Kitchen.tres" type="TileSet" id=4]
-[ext_resource path="res://scripts/Player.gd" type="Script" id=5]
 
 [node name="Main" type="Node2D"]
 position = Vector2( 0, 36 )
@@ -28,9 +27,8 @@ cell_size = Vector2( 16, 16 )
 format = 1
 tile_data = PoolIntArray( -589829, 6, 131074, -524293, 6, 131074, -458757, 6, 131074, -393221, 6, 131074, -327685, 6, 327682, -393208, 6, 65538, -262145, 4, 0, -327680, 6, 262146, -327679, 4, 0, -327672, 6, 65538, -196615, 0, 0, -196614, 2, 0, -196613, 1, 0, -262144, 6, 262146, -262136, 6, 65538, -196608, 6, 262144, -196600, 6, 65538, -65537, 4, 0, -131072, 6, 262146, -131071, 4, 0, -131064, 6, 65538, -7, 0, 0, -6, 2, 0, -5, 2, 0, -65536, 6, 262145, -65528, 6, 327682, 0, 6, 262146, 131071, 4, 0, 65536, 6, 327680, 65537, 4, 0, 65544, 4, 0, 196601, 2, 0, 196602, 2, 0, 196603, 1, 0, 131080, 5, 0, 196616, 4, 0, 262152, 3, 0 )
 
-[node name="Player" type="KinematicBody2D" parent="." instance=ExtResource( 2 )]
+[node name="Player" parent="." instance=ExtResource( 2 )]
 position = Vector2( -40.7436, 52.9271 )
-script = ExtResource( 5 )
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
 visible = false

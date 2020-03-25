@@ -22,10 +22,10 @@ func _ready():
 	npc_mum_scene.global_position = Vector2(-50, 65)
 
 	var tpr_scene_resource = load("res://scenes/ToiletPaperRoll.tscn")
-	for i in range(0, 5):
+	for i in range(0, 10):
 		var tpr_scene = tpr_scene_resource.instance()
 		add_child(tpr_scene)
-		tpr_scene.global_position = Vector2(0 - (40 * i), 0)
+		tpr_scene.global_position = Vector2(100 - (30 * i), -30 + (30 * i))
 		tpr_scene.add_to_group("tprs")
 		get_tree().call_group("npcs", "_add_target", tpr_scene)
 		

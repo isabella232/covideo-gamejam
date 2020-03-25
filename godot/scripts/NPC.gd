@@ -1,44 +1,51 @@
 extends Character
 class_name NPC
 
-var tile_size = 5
 
 var npc_think_time = 0.4
 var npc_think_timer = null
+var timer_running = false
 
-# todo deadlock timer for navigation
+var random_movement_time = 2
+var random_movement_timer = null
+var random_movement_direction : Vector2 = Vector2.ZERO
 
 export var npc_type = "retired_person"
 
 var targets = []
 var current_target : RigidBody2D = null
 
-var result_up
-var result_right
-var result_down
-var result_left
+var rng = RandomNumberGenerator.new()
 
 func _ready():
 	_setup_npc_think_time_timer()
+	_setup_random_movement_timer()
 	_setup_npc_type()
 	add_to_group("npcs")
 
 
 func _on_collision(colliding_body):
 	#print("npc collision " + colliding_body.name)
-	pass 
+	if ((colliding_body is RigidBody2D)):  # && colliding_body == current_target):
+		if (colliding_body.get_groups().has("tprs")):
+			var index = targets.find(colliding_body)
+			if(index != -1):
+				#print("ACQUIRING NEW TARGET")
+				targets.remove(index)
+				_find_closest_target()
+
 
 func _setup_npc_type():
 	match npc_type:
 		"retired_person":
-			speed = 2
+			speed = 10
 			strength = 5
 			
 		"yolo_hipster":
-			speed = 4
+			speed = 20
 			strength = 10
 		"family_mum":
-			speed = 6
+			speed = 30
 			strength = 30
 			npc_think_time = 0.25
 
@@ -46,37 +53,56 @@ func _setup_npc_type():
 func _add_target(newtarget):
 	#print("adding " + newtarget.name)
 	targets.append(newtarget)
-	_find_closest_target()
-	_move()
+	if (current_target == null && !timer_running):
+		_find_closest_target()
+
 
 func _find_closest_target():
 	if targets.size() == 0:
-		print("no targets!")
+		#print("no targets!")
+		current_target = null
 		pass
+	else:	
+		var closest_distance = targets[0].global_position.distance_to(self.global_position)
+		var closest_target = targets[0]
+		for target in targets:
+			var distance = target.global_position.distance_to(self.global_position)
+			if (distance < closest_distance):
+				closest_target = target
+				closest_distance = distance
 		
-	var closest_distance = targets[0].global_position.distance_to(self.global_position)
-	var closest_target = targets[0]
-	for target in targets:
-		var distance = target.global_position.distance_to(self.global_position)
-		if (distance < closest_distance):
-			closest_target = target
-			closest_distance = distance
-	
-	current_target = closest_target
-	#print("new target: " + current_target.name)
+		current_target = closest_target
+		#print("new target: " + current_target.name)
 
-func _move():
+
+func _move_to_target():
 	var target_direction = _get_direction_to_target()
-	var movement_direction = target_direction.normalized() * tile_size *speed
-	print(movement_direction)
+	var movement_direction = target_direction.normalized() * speed
+	#print(movement_direction)
 	move_and_slide(movement_direction)
-	
-	
+
+
 func _get_direction_to_target():
 	if current_target != null:
 		return current_target.global_position - global_position
 	else:
 		return Vector2.ZERO
+
+
+# move into a random direction; if new_rand_direction is true, a new randomized direction is used
+func _move_randomly(new_rand_direction):
+	if (new_rand_direction):
+		random_movement_direction = _get_random_direction()
+	#print(random_movement_direction)
+	move_and_slide(random_movement_direction.normalized() * speed)
+
+
+func _get_random_direction():
+	rng.randomize()
+	var x = rng.randf_range(-1, 1)
+	var y = rng.randf_range(-1, 1)
+	return  Vector2(x, y)
+
 
 func _setup_npc_think_time_timer():
 	npc_think_timer = Timer.new()
@@ -84,48 +110,53 @@ func _setup_npc_think_time_timer():
 	npc_think_timer.set_wait_time(npc_think_time)
 	npc_think_timer.connect("timeout", self, "_on_think_timer_timeout")
 	add_child(npc_think_timer)
-	npc_think_timer.start()
 	#print("npc timer set up")
 
+
 func _on_think_timer_timeout():
+	#print("think timer timeout")
 	pass
-	#print("npc timeout")
-	#if current_target != null:
-	#	_move()
-	#	npc_think_timer.start()
-	#else:
-	#	print("target is null")
-	
+
+func _setup_random_movement_timer():
+	random_movement_timer = Timer.new()
+	random_movement_timer.set_one_shot(true)
+	random_movement_timer.set_wait_time(random_movement_time)
+	random_movement_timer.connect("timeout", self, "_on_random_movement_timer_timeout")
+	add_child(random_movement_timer)
+
+func _on_random_movement_timer_timeout():
+	#print("rnd mv timer timeout")
+	_find_closest_target()
+	timer_running = false
+
 func _physics_process(delta):
-	#var movement_offset = _get_direction_to_target().normalized()
-	#var space_state = $CollisionShape2D.get_world_2d().direct_space_state
-	#var result_movement_dir = space_state.intersect_ray(Vector2(0, 0), Vector2(movement_offset.x, movement_offset.y))
-	
-	#if (result_movement_dir):
-		# 45 cw
-	#	var right = movement_offset.rotated(0.78)
-		# 45 ccw
-	#	var left = movement_offset.rotated(5.49)
-	#	var result_right = space_state.intersect_ray(self.global_position, Vector2(right.x * 2, right.y * 2))
-	#	if (!result_right):
-	#		move_and_slide(right)
-	#	else:
-	#		var result_left = space_state.intersect_ray(self.global_position, Vector2(left.x * 2, left.y * 2))
-	#		if (!result_left):
-	#			move_and_slide(left)
-	#		else:
-	#			print("NO WAY OUT!!")
-	_move()
-	
-
-func _calculate_route(targetdirection):
-	if (result_up == null || result_down == null || result_right == null ||result_left == null):
-		return Vector2(0, 0)
-	return targetdirection
+	# if npc is not moving around randomly and a target has been set, try to move to it
+	if (!timer_running && current_target != null):
+		var target_direction = _get_direction_to_target()
+		var space_state = $CollisionShape2D.get_world_2d().direct_space_state
+		var result_movement_dir = space_state.intersect_ray(global_position, current_target.global_position, [self])
+		
+		# check if path to tpr is obstructed; if not, move to the tpr, else move in a rnd direction
+		if (result_movement_dir):
+			if (result_movement_dir["collider"].get_groups().has("tprs")):
+				#print("to target")
+				_move_to_target()
+			else:
+				#print("obstructed, start rnd")
+				_start_random_movement_and_timer()
+	# if the we have not yet started to move in a random direction, start to do that now
+	elif (!timer_running && current_target == null):
+		#print("start rnd")
+		_start_random_movement_and_timer()
+	# npc is moving in a random direction for the duration of the timer. continue to do this
+	elif (timer_running):
+		#print("mv rnd")
+		_move_randomly(false)
 
 
-func _get_random_direction():
-	pass
-	
-	
-	
+func _start_random_movement_and_timer():
+	#print("start rnd mv timer")
+	timer_running = true
+	current_target = null 
+	_move_randomly(true)
+	random_movement_timer.start()
