@@ -4,10 +4,9 @@ class_name NPC
 
 var npc_think_time = 0.4
 var npc_think_timer = null
-var timer_running = false
 
 var random_movement_time = 2
-var random_movement_timer = null
+var random_movement_timer : Timer = null
 var random_movement_direction : Vector2 = Vector2.ZERO
 
 export var npc_type = "retired_person"
@@ -25,10 +24,10 @@ func _ready():
 
 
 func _on_collision(colliding_body):
-	if ((colliding_body is RigidBody2D)):
-		if (colliding_body.get_groups().has("tprs")):
+	if colliding_body is RigidBody2D:
+		if colliding_body.get_groups().has("tprs"):
 			var index = targets.find(colliding_body)
-			if(index != -1):
+			if index != -1:
 				targets.remove(index)
 				_find_closest_target()
 
@@ -42,6 +41,7 @@ func _setup_npc_type():
 		"yolo_hipster":
 			speed = 20
 			strength = 10
+			
 		"family_mum":
 			speed = 30
 			strength = 30
@@ -50,7 +50,7 @@ func _setup_npc_type():
 
 func _add_target(newtarget):
 	targets.append(newtarget)
-	if (current_target == null && !timer_running):
+	if current_target == null && random_movement_timer.is_stopped():
 		_find_closest_target()
 
 
@@ -63,7 +63,7 @@ func _find_closest_target():
 		var closest_target = targets[0]
 		for target in targets:
 			var distance = target.global_position.distance_to(self.global_position)
-			if (distance < closest_distance):
+			if distance < closest_distance:
 				closest_target = target
 				closest_distance = distance
 		
@@ -83,18 +83,16 @@ func _get_direction_to_target():
 		return Vector2.ZERO
 
 
-# move into a random direction; if new_rand_direction is true, a new randomized direction is used
-func _move_randomly(new_rand_direction):
-	if (new_rand_direction):
-		random_movement_direction = _get_random_direction()
-	move_and_slide(random_movement_direction.normalized() * speed)
+# move into a random direction; 
+func _move_randomly():
+	move_and_slide(random_movement_direction * speed)
 
 
 func _get_random_direction():
 	rng.randomize()
 	var x = rng.randf_range(-1, 1)
 	var y = rng.randf_range(-1, 1)
-	return  Vector2(x, y)
+	return  Vector2(x, y).normalized()
 
 
 func _setup_npc_think_time_timer():
@@ -119,33 +117,31 @@ func _setup_random_movement_timer():
 
 func _on_random_movement_timer_timeout():
 	_find_closest_target()
-	timer_running = false
 
 
 func _physics_process(delta):
 	# if npc is not moving around randomly and a target has been set, try to move to it
-	if (!timer_running && current_target != null):
+	if random_movement_timer.is_stopped() && current_target != null:
 		var space_state = $CollisionShape2D.get_world_2d().direct_space_state
 		var result_movement_dir = space_state.intersect_ray(global_position, current_target.global_position, [self])
 		
 		# check if path to tpr is obstructed; if not, move to the tpr, else move in a rnd direction
-		if (result_movement_dir):
-			if (result_movement_dir["collider"].get_groups().has("tprs")):
+		if result_movement_dir:
+			if result_movement_dir["collider"].get_groups().has("tprs"):
 				_move_to_target()
 			else:
 				_start_random_movement_and_timer()
 				
 	# if the we have not yet started to move in a random direction, start to do that now
-	elif (!timer_running && current_target == null):
+	elif random_movement_timer.is_stopped() && current_target == null:
 		_start_random_movement_and_timer()
 	
 	# npc is moving in a random direction for the duration of the timer. continue to do this
-	elif (timer_running):
-		_move_randomly(false)
+	elif !random_movement_timer.is_stopped():
+		_move_randomly()
 
 
 func _start_random_movement_and_timer():
-	timer_running = true
 	current_target = null 
-	_move_randomly(true)
+	random_movement_direction = _get_random_direction()
 	random_movement_timer.start()
